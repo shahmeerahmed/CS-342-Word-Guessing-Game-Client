@@ -19,6 +19,6 @@ public class WordGuessClient extends Application {
 		Scene scene = new Scene(new HBox(),600,600);
 		primaryStage.setScene(scene);
 		primaryStage.show();
-	}
+	} // Sam pushes this boi
 
 }
