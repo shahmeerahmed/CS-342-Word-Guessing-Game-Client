@@ -15,7 +15,7 @@ public class WordGuessClient extends Application {
 	public void start(Stage primaryStage) throws Exception {
 		// TODO Auto-generated method stub
 		primaryStage.setTitle("(Client) Word Guess!!!");
-		
+		//Ronaldo push test
 		Scene scene = new Scene(new HBox(),600,600);
 		primaryStage.setScene(scene);
 		primaryStage.show();
