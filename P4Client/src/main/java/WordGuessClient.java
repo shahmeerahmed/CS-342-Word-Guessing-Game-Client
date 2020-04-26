@@ -13,6 +13,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
+
 import java.util.HashMap;
 
 public class WordGuessClient extends Application {
@@ -91,14 +93,30 @@ public class WordGuessClient extends Application {
 		foodButton.relocate(10,310);
 
 
-
-
 		// "Start Guess the Word!" button
 		openingScreenButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
+
+				clientConnection = new GuessClient(data->{
+					Platform.runLater(()->{listItems2.getItems().add(data.toString());
+						int lastMessage = listItems2.getItems().size();
+						listItems2.scrollTo(lastMessage);
+						});
+				}, Integer.parseInt(portBox.getText()), ipBox.getText());
+				clientConnection.start();
+
 				sceneMap.put("main screen", new Scene(mainScenePane,400,470));
 				primaryStage.setScene(sceneMap.get("main screen"));
+			}
+		});
+
+		//if window is closed the program exits out
+		primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+			@Override
+			public void handle(WindowEvent event) {
+				Platform.exit();
+				System.exit(0);
 			}
 		});
 
