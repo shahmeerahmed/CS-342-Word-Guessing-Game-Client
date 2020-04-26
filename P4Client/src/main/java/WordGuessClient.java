@@ -4,6 +4,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 import javafx.scene.image.Image;
@@ -20,8 +21,14 @@ public class WordGuessClient extends Application {
 	Text portText;
 	TextField ipBox;
 	Text ipText;
+	Pane mainScenePane;
 	Button openingScreenButton;
+	Button gameButton;
+	Button sportsButton;
+	Button foodButton;
+	GuessClient clientConnection;
 	HashMap<String, Scene> sceneMap = new HashMap<>();
+	ListView<String> listItems2;
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
@@ -55,7 +62,11 @@ public class WordGuessClient extends Application {
 		ipText.setFill(Color.WHITE);
 
 		openingScreenButton = new Button("Start Guess the Word!");
+		gameButton = new Button("Games");
+		sportsButton = new Button("Sports");
+		foodButton = new Button("Food");
 
+		//sets up the start screen
 		Pane startPane = new Pane();
 		startPane.setBackground(new Background(new BackgroundImage(new Image("randomLetters.png", 532, 720, false,true), BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,  BackgroundSize.DEFAULT)));
 		startPane.getChildren().addAll(ipText, ipBox, portText, portBox, openingScreenButton);
@@ -65,6 +76,31 @@ public class WordGuessClient extends Application {
 		ipBox.relocate(165, 330);
 		openingScreenButton.relocate(170, 400);
 
+		//Choosing category scene set up
+		mainScenePane = new Pane();
+		mainScenePane.setBackground(new Background(new BackgroundImage(new Image("chooseCategory.jpg", 400, 470, true,true), BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,  BackgroundSize.DEFAULT)));
+		gameButton.setPrefSize(370,  120);
+		gameButton.setStyle("-fx-font-size:40");
+		sportsButton.setPrefSize(370,  120);
+		sportsButton.setStyle("-fx-font-size:40");
+		foodButton.setPrefSize(370,  120);
+		foodButton.setStyle("-fx-font-size:40");
+		mainScenePane.getChildren().addAll(gameButton, sportsButton, foodButton);
+		gameButton.relocate(10, 50);
+		sportsButton.relocate(10, 180);
+		foodButton.relocate(10,310);
+
+
+
+
+		// "Start Guess the Word!" button
+		openingScreenButton.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				sceneMap.put("main screen", new Scene(mainScenePane,400,470));
+				primaryStage.setScene(sceneMap.get("main screen"));
+			}
+		});
 
 		// show the start screen
 		sceneMap.put("start screen", new Scene(startPane, 532, 720));
