@@ -39,13 +39,15 @@ public class GuessClient extends Thread{
             //receives the GuessInfo class from the server
             try {
 
-
-
                 temp = (GuessInfo) in.readObject();
 
                 clientInfo.setWord(temp.getWord());
                 for(String category : temp.getCategories())
                     clientInfo.setCategories(category);
+
+                clientInfo.setNumWordsGuessed(temp.getNumWordsGuessed());
+                clientInfo.setNumWrongGuesses(temp.getNumWrongGuesses());
+
                 System.out.println("Client Word is " + temp.getWord());
 
             }

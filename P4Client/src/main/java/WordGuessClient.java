@@ -144,15 +144,14 @@ public class WordGuessClient extends Application {
 			@Override
 			public void handle(ActionEvent event) {
 				clientConnection.send("Video Games");
-				String sam;
-				while(true){
-					sam = clientConnection.clientInfo.getWord();
-					if(!sam.equals("")){
-						break;
-					}
-					System.out.print("");
+
+				try {
+					Thread.sleep(500);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
 				}
-				wordText = new Text(sam);
+
+				wordText = new Text(clientConnection.clientInfo.getWord());
 				wordText.setFont(Font.font ("Verdana", 20));
 				wordText.setStyle("-fx-font-weight: bold");
 				wordText.setFill(Color.RED);
@@ -190,21 +189,14 @@ public class WordGuessClient extends Application {
 				if(Character.isLetter(letterGuessBox.getText().charAt(0)) && letterGuessBox.getText().length() == 1){
 					clientConnection.send(letterGuessBox.getText());
 				}
-				String luke;
-				String shahmeer = clientConnection.clientInfo.getWord();
-				while(true){
-					luke = clientConnection.clientInfo.getWord();
-					if(!luke.equals(shahmeer)){
-						break;
-					}
-					System.out.print("");
-				}
-				wordText.setText(luke);
+
 				try {
-					Thread.sleep(2000);
+					Thread.sleep(500);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
+				wordText.setText(clientConnection.clientInfo.getWord());
+
 				if(clientConnection.clientInfo.getNumWordsGuessed() != currentWins){
 					currentWins++;
 					primaryStage.setScene(sceneMap.get("main screen"));
