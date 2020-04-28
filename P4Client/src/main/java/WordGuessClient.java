@@ -3,6 +3,8 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import java.util.concurrent.TimeUnit;
+
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -111,6 +113,7 @@ public class WordGuessClient extends Application {
 		wordText.setFont(Font.font ("Verdana", 40));
 		wordText.setStyle("-fx-font-weight: bold");
 		wordText.setFill(Color.WHITE);
+		letterGuessBox.setAlignment(Pos.CENTER);
 
 		// "Start Guess the Word!" button
 		openingScreenButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -129,6 +132,7 @@ public class WordGuessClient extends Application {
 			}
 		});
 
+		//sets up the video game category and gets a word from the server
 		gameButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
@@ -141,7 +145,6 @@ public class WordGuessClient extends Application {
 				}
 				wordText.setText(clientConnection.clientInfo.getWord());
 
-				//sets up the scene for the video game screen
 				gameScreenPane.getChildren().addAll(guessButton, letterGuessBox, listItems, guessesLeft, wordText);
 				guessButton.relocate(425, 475);
 				guessesLeft.relocate(50, 100);
@@ -153,6 +156,7 @@ public class WordGuessClient extends Application {
 			}
 		});
 
+		//sets up the sports category and gets a word from the server
 		sportsButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
@@ -165,7 +169,6 @@ public class WordGuessClient extends Application {
 				}
 				wordText.setText(clientConnection.clientInfo.getWord());
 
-				//sets up the scene for the video game screen
 				sportsPane.getChildren().addAll(guessButton, letterGuessBox, listItems, guessesLeft, wordText);
 				guessButton.relocate(400, 475);
 				guessesLeft.relocate(50, 100);
@@ -177,6 +180,7 @@ public class WordGuessClient extends Application {
 			}
 		});
 
+		//sets up the food category and gets a word from the server
 		foodButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
@@ -189,7 +193,6 @@ public class WordGuessClient extends Application {
 				}
 				wordText.setText(clientConnection.clientInfo.getWord());
 
-				//sets up the scene for the video game screen
 				foodPane.getChildren().addAll(guessButton, letterGuessBox, listItems, guessesLeft, wordText);
 				guessButton.relocate(400, 475);
 				guessesLeft.relocate(50, 100);
@@ -201,16 +204,20 @@ public class WordGuessClient extends Application {
 			}
 		});
 
+		//the Guess button which evaluates the character to see if it is a valid choice
 		guessButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				if(Character.isLetter(letterGuessBox.getText().charAt(0)) && letterGuessBox.getText().length() == 1){
+				if(letterGuessBox.getText().isEmpty()){
+					letterGuessBox.setPromptText("Nothing is in here!");
+				}
+				else if(Character.isLetter(letterGuessBox.getText().charAt(0)) && letterGuessBox.getText().length() == 1){
 					clientConnection.send(letterGuessBox.getText().toUpperCase());
 					letterGuessBox.clear();
 				}
 				else{
 					letterGuessBox.clear();
-					letterGuessBox.setPromptText("Try Again character is not valid");
+					listItems.getItems().add("Try Again! Character is not valid");
 				}
 
 				try {
