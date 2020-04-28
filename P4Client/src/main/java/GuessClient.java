@@ -46,6 +46,10 @@ public class GuessClient extends Thread{
                 }
 
                 clientInfo.setWord(temp.getWord());
+
+                for (int i = 0; i < clientInfo.getCategories().size(); i++)
+                    clientInfo.removeCategory();
+
                 for(String category : temp.getCategories())
                     clientInfo.setCategories(category);
 

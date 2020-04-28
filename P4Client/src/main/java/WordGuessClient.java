@@ -2,7 +2,6 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import java.util.concurrent.TimeUnit;
 
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -45,7 +44,7 @@ public class WordGuessClient extends Application {
 
 	GuessClient clientConnection;
 	HashMap<String, Scene> sceneMap = new HashMap<>();
-	ListView<String> listItems = new ListView<String>();;
+	ListView<String> listItems = new ListView<String>();
 	int currentWins = 0;
 	int guessedWrong = 0;
 
@@ -136,6 +135,7 @@ public class WordGuessClient extends Application {
 		gameButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
+				//initialize();
 				clientConnection.send("Video Games");
 
 				try {
@@ -144,7 +144,6 @@ public class WordGuessClient extends Application {
 					e.printStackTrace();
 				}
 				wordText.setText(clientConnection.clientInfo.getWord());
-
 				gameScreenPane.getChildren().addAll(guessButton, letterGuessBox, listItems, guessesLeft, wordText);
 				guessButton.relocate(425, 475);
 				guessesLeft.relocate(50, 100);
@@ -231,7 +230,7 @@ public class WordGuessClient extends Application {
 					guessesLeft.setText("You now have " + (6 - clientConnection.clientInfo.getNumWrongGuesses()) + " guesses");
 				}
 
-				if(clientConnection.clientInfo.getNumWordsGuessed() != currentWins){
+				if((6 - clientConnection.clientInfo.getNumWrongGuesses()) == 0){
 					currentWins++;
 					clientConnection.clientInfo.clearGuesses();
 					if(clientConnection.clientInfo.getCategories().contains("Video Games") && !gameButton.isDisable()){
@@ -242,7 +241,7 @@ public class WordGuessClient extends Application {
 						sportsPane.getChildren().removeAll();
 						sportsButton.setDisable(true);
 					}
-					else{
+					else if(clientConnection.clientInfo.getCategories().contains("Foods") && !foodButton.isDisable()){
 						foodPane.getChildren().removeAll();
 						foodButton.setDisable(true);
 					}
@@ -264,6 +263,26 @@ public class WordGuessClient extends Application {
 		// show the start screen
 		primaryStage.setScene(sceneMap.get("start screen"));
 		primaryStage.show();
+	}
+
+	private void initialize(){
+		gameScreenPane = new Pane();
+		guessButton = new Button("Take your guess!");
+		letterGuessBox = new TextField();
+		listItems = new ListView<String>();
+		wordText = new Text();
+		guessesLeft = new Text();
+
+		guessesLeft.setFont(Font.font ("Verdana", 20));
+		guessesLeft.setStyle("-fx-font-weight: bold");
+		guessesLeft.setFill(Color.WHITE);
+		guessesLeft.setText("You have 6 guesses left!");
+		wordText.setFont(Font.font ("Verdana", 40));
+		wordText.setStyle("-fx-font-weight: bold");
+		wordText.setFill(Color.WHITE);
+		letterGuessBox.setAlignment(Pos.CENTER);
+
+		wordText.setText(clientConnection.clientInfo.getWord());
 	}
 
 
