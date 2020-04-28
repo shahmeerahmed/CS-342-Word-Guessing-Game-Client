@@ -44,9 +44,9 @@ public class GuessClient extends Thread{
                 temp = (GuessInfo) in.readObject();
 
                 clientInfo.setWord(temp.getWord());
-
-                for(String category : clientInfo.getCategories())
+                for(String category : temp.getCategories())
                     clientInfo.setCategories(category);
+                System.out.println("Client Word is " + temp.getWord());
 
             }
             catch(Exception e) {}
@@ -66,6 +66,9 @@ public class GuessClient extends Thread{
             if(data.equals("yes")){
                 clientInfo = null;
                 clientInfo = new GuessInfo();
+            }
+            else{
+                clientInfo = null;
             }
         }
         try {

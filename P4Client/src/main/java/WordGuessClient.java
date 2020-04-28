@@ -2,7 +2,7 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Insets;
+import java.util.concurrent.TimeUnit;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
@@ -26,6 +26,7 @@ public class WordGuessClient extends Application {
 	Text ipText;
 	TextField letterGuessBox;
 	Text letterText;
+	Text wordText;
 	Pane mainScenePane;
 	Button openingScreenButton;
 	Button gameButton;
@@ -35,6 +36,7 @@ public class WordGuessClient extends Application {
 	GuessClient clientConnection;
 	HashMap<String, Scene> sceneMap = new HashMap<>();
 	ListView<String> listItems2;
+	int currentWins = 0;
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
@@ -48,7 +50,7 @@ public class WordGuessClient extends Application {
 		primaryStage.setTitle("(Client) Word Guess!!!");
 
 		// set up start screen:
-		portBox = new TextField();
+		portBox = new TextField("5555");
 
 		// prevent user from being able to enter more than 4 characters for port
 		portBox.setTextFormatter(new TextFormatter<String>(change ->
@@ -62,7 +64,7 @@ public class WordGuessClient extends Application {
 		portText.setFill(Color.WHITE);
 
 		// textbox for entering ip address
-		ipBox = new TextField();
+		ipBox = new TextField("127.0.0.1");
 		ipText = new Text("Enter an IP:");
 		ipText.setFont(Font.font ("Verdana", 20));
 		ipText.setStyle("-fx-font-weight: bold");
@@ -119,6 +121,7 @@ public class WordGuessClient extends Application {
 		letterGuessBox.relocate(445, 450);
 		listItems2.relocate(100,725);
 
+		clientConnection = new GuessClient(data->{}, 0,"00");
 
 		// "Start Guess the Word!" button
 		openingScreenButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -140,7 +143,22 @@ public class WordGuessClient extends Application {
 		gameButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
+				clientConnection.send("Video Games");
+				String sam;
+				while(true){
+					sam = clientConnection.clientInfo.getWord();
+					if(!sam.equals("")){
+						break;
+					}
+					System.out.print("");
+				}
+				wordText = new Text(sam);
+				wordText.setFont(Font.font ("Verdana", 20));
+				wordText.setStyle("-fx-font-weight: bold");
+				wordText.setFill(Color.RED);
 				gameScreenPane.setBackground(new Background(new BackgroundImage(new Image("videoGames.jpg", 1000, 900, false,true), BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,  BackgroundSize.DEFAULT)));
+				gameScreenPane.getChildren().add(wordText);
+				wordText.relocate(500,500);
 				sceneMap.put("Game Screen", new Scene(gameScreenPane, 1000, 900));
 				primaryStage.setScene(sceneMap.get("Game Screen"));
 			}
@@ -149,6 +167,7 @@ public class WordGuessClient extends Application {
 		sportsButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
+				clientConnection.send("Sports");
 				gameScreenPane.setBackground(new Background(new BackgroundImage(new Image("sports.jpg", 1000, 900, false,true), BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,  BackgroundSize.DEFAULT)));
 				sceneMap.put("Game Screen", new Scene(gameScreenPane, 1000, 900));
 				primaryStage.setScene(sceneMap.get("Game Screen"));
@@ -158,9 +177,38 @@ public class WordGuessClient extends Application {
 		foodButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
+				clientConnection.send("Foods");
 				gameScreenPane.setBackground(new Background(new BackgroundImage(new Image("food.jpg", 1000, 900, false,true), BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,  BackgroundSize.DEFAULT)));
 				sceneMap.put("Game Screen", new Scene(gameScreenPane, 1000, 900));
 				primaryStage.setScene(sceneMap.get("Game Screen"));
+			}
+		});
+
+		guessButton.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				if(Character.isLetter(letterGuessBox.getText().charAt(0)) && letterGuessBox.getText().length() == 1){
+					clientConnection.send(letterGuessBox.getText());
+				}
+				String luke;
+				String shahmeer = clientConnection.clientInfo.getWord();
+				while(true){
+					luke = clientConnection.clientInfo.getWord();
+					if(!luke.equals(shahmeer)){
+						break;
+					}
+					System.out.print("");
+				}
+				wordText.setText(luke);
+				try {
+					Thread.sleep(2000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				if(clientConnection.clientInfo.getNumWordsGuessed() != currentWins){
+					currentWins++;
+					primaryStage.setScene(sceneMap.get("main screen"));
+				}
 			}
 		});
 
