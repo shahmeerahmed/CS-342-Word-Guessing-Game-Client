@@ -31,16 +31,22 @@ public class GuessClient extends Thread{
             socketClient.setTcpNoDelay(true);
         }
         catch(Exception e){}
+
         clientInfo = new GuessInfo();
         GuessInfo temp;
+
         while(true) {
             //receives the GuessInfo class from the server
             try {
+
+
+
                 temp = (GuessInfo) in.readObject();
 
                 clientInfo.setWord(temp.getWord());
 
-                //callback.accept(clientInfo.getPlayerString());
+                for(String category : clientInfo.getCategories())
+                    clientInfo.setCategories(category);
 
             }
             catch(Exception e) {}
@@ -52,39 +58,23 @@ public class GuessClient extends Thread{
     public void send(String data) {
         if(data.equals("Video Games") || data.equals("Sports") || data.equals("Foods")) {
             clientInfo.setCategories(data);
-            try {
-                out.reset();
-                out.writeObject(clientInfo);
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
         }
         else if(data.length() == 1 && Character.isAlphabetic(data.charAt(0))){
             clientInfo.setGuesses(data.charAt(0));
-
-            try{
-                out.reset();
-                out.writeObject(data);
-            }
-            catch(Exception e){
-                System.out.println("What in the flip do you think will happen.");
-            }
         }
         else{
             if(data.equals("yes")){
                 clientInfo = null;
                 clientInfo = new GuessInfo();
-                try {
-                    out.reset();
-                    out.writeObject(clientInfo);
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
             }
         }
+        try {
+            out.reset();
+            out.writeObject(clientInfo);
+        } catch (IOException e) {
 
+            e.printStackTrace();
+        }
 
     }
 }
