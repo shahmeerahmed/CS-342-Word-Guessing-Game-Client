@@ -41,9 +41,16 @@ public class GuessClient extends Thread{
 
                 temp = (GuessInfo) in.readObject();
 
+                if(temp.getNumWrongGuesses() != clientInfo.getNumWrongGuesses()){
+                    callback.accept("You guessed wrong!");
+                }
+
                 clientInfo.setWord(temp.getWord());
                 for(String category : temp.getCategories())
                     clientInfo.setCategories(category);
+
+                for(char c : temp.getGuesses())
+                    clientInfo.setGuesses(c);
 
                 clientInfo.setNumWordsGuessed(temp.getNumWordsGuessed());
                 clientInfo.setNumWrongGuesses(temp.getNumWrongGuesses());
