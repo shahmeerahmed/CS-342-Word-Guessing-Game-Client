@@ -11,6 +11,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
@@ -34,6 +35,8 @@ public class WordGuessClient extends Application {
 	Button sportsButton = new Button("Sports");
 	Button foodButton = new Button("Food");
 	Button guessButton = new Button("Take your guess!");
+	Button playAgain = new Button("Play Again");
+	Button quitButton = new Button("Quit");
 
 	//all the panes needed for the program
 	Pane startPane = new Pane();
@@ -41,6 +44,8 @@ public class WordGuessClient extends Application {
 	Pane gameScreenPane = new Pane();
 	Pane sportsPane = new Pane();
 	Pane foodPane = new Pane();
+	Pane winPane = new Pane();
+	Pane losePane = new Pane();
 
 	GuessClient clientConnection;
 	HashMap<String, Scene> sceneMap = new HashMap<>();
@@ -105,14 +110,15 @@ public class WordGuessClient extends Application {
 		sceneMap.put("main screen", new Scene(mainScenePane,400,470));
 
 		//The guessing portion of the screen set up
-		guessesLeft.setFont(Font.font ("Verdana", 20));
+		guessesLeft.setFont(Font.font ("Comic Sans MS", 20));
 		guessesLeft.setStyle("-fx-font-weight: bold");
 		guessesLeft.setFill(Color.WHITE);
-		guessesLeft.setText("You have 6 guesses left!");
-		wordText.setFont(Font.font ("Verdana", 40));
+		wordText.setFont(Font.font ("Comic Sans MS", 40));
 		wordText.setStyle("-fx-font-weight: bold");
 		wordText.setFill(Color.WHITE);
 		letterGuessBox.setAlignment(Pos.CENTER);
+		letterGuessBox.setStyle("-fx-font-size:20");
+		letterGuessBox.setPrefSize(250,50);
 
 		// "Start Guess the Word!" button
 		openingScreenButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -126,6 +132,7 @@ public class WordGuessClient extends Application {
 						});
 				}, Integer.parseInt(portBox.getText()), ipBox.getText());
 				clientConnection.start();
+				//System.out.println(javafx.scene.text.Font.getFamilies());
 
 				primaryStage.setScene(sceneMap.get("main screen"));
 			}
@@ -135,7 +142,6 @@ public class WordGuessClient extends Application {
 		gameButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				//initialize();
 				clientConnection.send("Video Games");
 
 				try {
@@ -143,13 +149,22 @@ public class WordGuessClient extends Application {
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
-				wordText.setText(clientConnection.clientInfo.getWord());
-				gameScreenPane.getChildren().addAll(guessButton, letterGuessBox, listItems, guessesLeft, wordText);
-				guessButton.relocate(425, 475);
-				guessesLeft.relocate(50, 100);
-				letterGuessBox.relocate(400, 450);
+				//gets the word from the server and the number of guesses
+				guessesLeft.setText("You have " + (6 - clientConnection.clientInfo.getNumWrongGuesses()) + " guesses left!");
+				wordText.setText(clientConnection.clientInfo.getWord().replace("", " ").trim());
+
+				//removes everything from the pane & adds them back into the pane
+				gameScreenPane = new Pane();
+				gameScreenPane.getChildren().removeAll();
+				VBox vBox = new VBox(wordText, letterGuessBox, guessButton);
+				vBox.setAlignment(Pos.CENTER);
+				gameScreenPane.getChildren().addAll(vBox, listItems, guessesLeft);
+
+				//relocates the items in pane
+				vBox.relocate(375,400);
+				guessesLeft.relocate(50, 20);
 				listItems.relocate(100,725);
-				wordText.relocate(400,375);
+
 				gameScreenPane.setBackground(new Background(new BackgroundImage(new Image("videoGames.jpg", 1000, 900, false,true), BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,  BackgroundSize.DEFAULT)));
 				primaryStage.setScene(new Scene(gameScreenPane, 1000, 900));
 			}
@@ -166,14 +181,22 @@ public class WordGuessClient extends Application {
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
-				wordText.setText(clientConnection.clientInfo.getWord());
+				//gets the word from the server and the number of guesses
+				guessesLeft.setText("You have " + (6 - clientConnection.clientInfo.getNumWrongGuesses()) + " guesses left!");
+				wordText.setText(clientConnection.clientInfo.getWord().replace("", " ").trim());
 
-				sportsPane.getChildren().addAll(guessButton, letterGuessBox, listItems, guessesLeft, wordText);
-				guessButton.relocate(400, 475);
-				guessesLeft.relocate(50, 100);
-				letterGuessBox.relocate(445, 450);
+				//removes everything from the pane & adds them back into the pane
+				sportsPane = new Pane();
+				sportsPane.getChildren().removeAll();
+				VBox vBox = new VBox(wordText, letterGuessBox, guessButton);
+				vBox.setAlignment(Pos.CENTER);
+				sportsPane.getChildren().addAll(vBox, listItems, guessesLeft);
+
+				//relocates the items in pane
+				vBox.relocate(350,550);
+				guessesLeft.relocate(50, 20);
 				listItems.relocate(100,725);
-				wordText.relocate(500,500);
+
 				sportsPane.setBackground(new Background(new BackgroundImage(new Image("sports.jpg", 1000, 900, false,true), BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,  BackgroundSize.DEFAULT)));
 				primaryStage.setScene(new Scene(sportsPane, 1000, 900));
 			}
@@ -190,18 +213,33 @@ public class WordGuessClient extends Application {
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
-				wordText.setText(clientConnection.clientInfo.getWord());
+				//gets the word from the server and the number of guesses
+				wordText.setText(clientConnection.clientInfo.getWord().replace("", " ").trim());
+				guessesLeft.setText("You have " + (6 - clientConnection.clientInfo.getNumWrongGuesses()) + " guesses left!");
 
-				foodPane.getChildren().addAll(guessButton, letterGuessBox, listItems, guessesLeft, wordText);
-				guessButton.relocate(400, 475);
-				guessesLeft.relocate(50, 100);
-				letterGuessBox.relocate(445, 450);
+				//removes everything from the pane & adds them back into the pane
+				foodPane = new Pane();
+				foodPane.getChildren().removeAll();
+				VBox vBox = new VBox(wordText, letterGuessBox, guessButton);
+				vBox.setAlignment(Pos.CENTER);
+				foodPane.getChildren().addAll(vBox, listItems, guessesLeft);
+
+				//relocates the items in pane
+				vBox.relocate(360,300);
+				guessesLeft.relocate(50, 20);
 				listItems.relocate(100,725);
-				wordText.relocate(500,500);
+
 				foodPane.setBackground(new Background(new BackgroundImage(new Image("food.jpg", 1000, 900, false,true), BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,  BackgroundSize.DEFAULT)));
 				primaryStage.setScene(new Scene(foodPane, 1000, 900));
 			}
 		});
+
+		//sets up the win screen when the player wins the game
+		winPane.setBackground(new Background(new BackgroundImage(new Image("winner.jpg", 608, 342, true,true), BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,  BackgroundSize.DEFAULT)));
+		winPane.getChildren().addAll(playAgain, quitButton);
+		playAgain.relocate(200,200);
+		quitButton.relocate(300, 200);
+		sceneMap.put("Win", new Scene(winPane, 608,342));
 
 		//the Guess button which evaluates the character to see if it is a valid choice
 		guessButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -224,29 +262,59 @@ public class WordGuessClient extends Application {
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
-				wordText.setText(clientConnection.clientInfo.getWord());
+				wordText.setText(clientConnection.clientInfo.getWord().replace("", " ").trim());
 
 				if(clientConnection.clientInfo.getNumWrongGuesses() != guessedWrong){
 					guessesLeft.setText("You now have " + (6 - clientConnection.clientInfo.getNumWrongGuesses()) + " guesses");
 				}
 
-				if((6 - clientConnection.clientInfo.getNumWrongGuesses()) == 0){
+				if((6 - clientConnection.clientInfo.getNumWrongGuesses()) == 0 || clientConnection.clientInfo.getNumWordsGuessed() != currentWins){
 					currentWins++;
 					clientConnection.clientInfo.clearGuesses();
 					if(clientConnection.clientInfo.getCategories().contains("Video Games") && !gameButton.isDisable()){
 						gameScreenPane.getChildren().removeAll();
+						listItems.getItems().clear();
 						gameButton.setDisable(true);
 					}
 					else if(clientConnection.clientInfo.getCategories().contains("Sports") && !sportsButton.isDisable()){
 						sportsPane.getChildren().removeAll();
+						listItems.getItems().clear();
 						sportsButton.setDisable(true);
 					}
 					else if(clientConnection.clientInfo.getCategories().contains("Foods") && !foodButton.isDisable()){
 						foodPane.getChildren().removeAll();
+						listItems.getItems().clear();
 						foodButton.setDisable(true);
 					}
 					primaryStage.setScene(sceneMap.get("main screen"));
 				}
+				if(sportsButton.isDisable() && foodButton.isDisable() && gameButton.isDisable()){
+					primaryStage.setScene(sceneMap.get("Win"));
+				}
+			}
+		});
+
+		quitButton.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				clientConnection.send("no");
+				Platform.exit();
+				System.exit(0);
+			}
+		});
+
+		playAgain.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				gameButton.setDisable(false);
+				foodButton.setDisable(false);
+				sportsButton.setDisable(false);
+				clearClient();
+				listItems.getItems().clear();
+				clientConnection.send("yes");
+				currentWins = 0;
+				guessedWrong = 0;
+				primaryStage.setScene(sceneMap.get("main screen"));
 			}
 		});
 
@@ -264,26 +332,12 @@ public class WordGuessClient extends Application {
 		primaryStage.setScene(sceneMap.get("start screen"));
 		primaryStage.show();
 	}
-
-	private void initialize(){
-		gameScreenPane = new Pane();
-		guessButton = new Button("Take your guess!");
-		letterGuessBox = new TextField();
-		listItems = new ListView<String>();
-		wordText = new Text();
-		guessesLeft = new Text();
-
-		guessesLeft.setFont(Font.font ("Verdana", 20));
-		guessesLeft.setStyle("-fx-font-weight: bold");
-		guessesLeft.setFill(Color.WHITE);
-		guessesLeft.setText("You have 6 guesses left!");
-		wordText.setFont(Font.font ("Verdana", 40));
-		wordText.setStyle("-fx-font-weight: bold");
-		wordText.setFill(Color.WHITE);
-		letterGuessBox.setAlignment(Pos.CENTER);
-
-		wordText.setText(clientConnection.clientInfo.getWord());
+	private void clearClient(){
+		clientConnection.clientInfo.setNumWordsGuessed(0);
+		clientConnection.clientInfo.setNumWrongGuesses(0);
+		clientConnection.clientInfo.getCategories().clear();
+		clientConnection.clientInfo.setWord("");
+		clientConnection.clientInfo.clearGuesses();
 	}
-
 
 }
