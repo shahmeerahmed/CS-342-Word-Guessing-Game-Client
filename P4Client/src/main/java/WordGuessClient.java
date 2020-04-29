@@ -132,6 +132,7 @@ public class WordGuessClient extends Application {
 						});
 				}, Integer.parseInt(portBox.getText()), ipBox.getText());
 				clientConnection.start();
+
 				//System.out.println(javafx.scene.text.Font.getFamilies());
 
 				primaryStage.setScene(sceneMap.get("main screen"));
@@ -234,13 +235,6 @@ public class WordGuessClient extends Application {
 			}
 		});
 
-		//sets up the win screen when the player wins the game
-		winPane.setBackground(new Background(new BackgroundImage(new Image("winner.jpg", 608, 342, true,true), BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,  BackgroundSize.DEFAULT)));
-		winPane.getChildren().addAll(playAgain, quitButton);
-		playAgain.relocate(200,200);
-		quitButton.relocate(300, 200);
-		sceneMap.put("Win", new Scene(winPane, 608,342));
-
 		//the Guess button which evaluates the character to see if it is a valid choice
 		guessButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
@@ -271,6 +265,8 @@ public class WordGuessClient extends Application {
 				if((6 - clientConnection.clientInfo.getNumWrongGuesses()) == 0 || clientConnection.clientInfo.getNumWordsGuessed() != currentWins){
 					currentWins++;
 					clientConnection.clientInfo.clearGuesses();
+
+					//if-statements that check to see if you guessed the word correctly
 					if(clientConnection.clientInfo.getCategories().contains("Video Games") && !gameButton.isDisable()){
 						gameScreenPane.getChildren().removeAll();
 						listItems.getItems().clear();
@@ -288,8 +284,28 @@ public class WordGuessClient extends Application {
 					}
 					primaryStage.setScene(sceneMap.get("main screen"));
 				}
+				//if the user wins sets up and shows the win screen
 				if(sportsButton.isDisable() && foodButton.isDisable() && gameButton.isDisable()){
-					primaryStage.setScene(sceneMap.get("Win"));
+					//sets up the win screen when the player wins the game
+					winPane = new Pane();
+					winPane.setBackground(new Background(new BackgroundImage(new Image("winner.jpg", 608, 342, true,true), BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,  BackgroundSize.DEFAULT)));
+					winPane.getChildren().removeAll();
+					HBox hBox = new HBox(playAgain, quitButton);
+					hBox.setSpacing(100);
+					winPane.getChildren().addAll(hBox);
+					hBox.relocate(200,300);
+					primaryStage.setScene(new Scene(winPane, 608,342));
+				}
+				//if the user loses sets up and shows the losing screen
+				if(clientConnection.clientInfo.getWord().equals("game over")){
+					losePane = new Pane();
+					losePane.setBackground(new Background(new BackgroundImage(new Image("loser.png", 500, 400, true,true), BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,  BackgroundSize.DEFAULT)));
+					losePane.getChildren().removeAll();
+					HBox hbox = new HBox(playAgain, quitButton);
+					hbox.setSpacing(150);
+					losePane.getChildren().addAll(hbox);
+					hbox.relocate(100, 300);
+					primaryStage.setScene(new Scene(losePane, 500,400));
 				}
 			}
 		});

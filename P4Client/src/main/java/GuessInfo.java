@@ -9,6 +9,7 @@ public class GuessInfo implements Serializable {
     private ArrayList<String> categories;
     private int numWordsGuessed;
 
+
     GuessInfo() {
         numWrongGuesses = 0;
         guesses = new ArrayList<>();
