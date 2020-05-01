@@ -8,6 +8,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -47,11 +49,23 @@ public class WordGuessClient extends Application {
 	Pane winPane = new Pane();
 	Pane losePane = new Pane();
 
+	//Extra variables needed
+	String fontFamily = "Haettenschweiler";
 	GuessClient clientConnection;
 	HashMap<String, Scene> sceneMap = new HashMap<>();
 	ListView<String> listItems = new ListView<String>();
 	int currentWins = 0;
 	int guessedWrong = 0;
+
+	//All music files needed
+	Media intro = new Media(getClass().getClassLoader().getResource("Title Screen.mp3").toString());
+	MediaPlayer introSong = new MediaPlayer(intro);
+
+	Media mainMenu = new Media(getClass().getClassLoader().getResource("Main Menu.mp3").toString());
+	MediaPlayer mainMenuSong = new MediaPlayer(mainMenu);
+
+	Media win = new Media(getClass().getClassLoader().getResource("Queen - We Are The Champions (Official Video).mp3").toString());
+	MediaPlayer winSong = new MediaPlayer(win);
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
@@ -69,12 +83,12 @@ public class WordGuessClient extends Application {
 				change.getControlNewText().length() <= 4 ? change : null));
 
 		// styling the text for displaying enter port
-		portText.setFont(Font.font ("Verdana", 20));
+		portText.setFont(Font.font (fontFamily, 20));
 		portText.setStyle("-fx-font-weight: bold");
 		portText.setFill(Color.WHITE);
 
 		//styling the text for displaying Enter an ip address
-		ipText.setFont(Font.font ("Verdana", 20));
+		ipText.setFont(Font.font (fontFamily, 20));
 		ipText.setStyle("-fx-font-weight: bold");
 		ipText.setFill(Color.WHITE);
 
@@ -110,10 +124,10 @@ public class WordGuessClient extends Application {
 		sceneMap.put("main screen", new Scene(mainScenePane,400,470));
 
 		//The guessing portion of the screen set up
-		guessesLeft.setFont(Font.font ("Comic Sans MS", 20));
+		guessesLeft.setFont(Font.font (fontFamily, 40));
 		guessesLeft.setStyle("-fx-font-weight: bold");
 		guessesLeft.setFill(Color.WHITE);
-		wordText.setFont(Font.font ("Comic Sans MS", 40));
+		wordText.setFont(Font.font (fontFamily, 40));
 		wordText.setStyle("-fx-font-weight: bold");
 		wordText.setFill(Color.WHITE);
 		letterGuessBox.setAlignment(Pos.CENTER);
@@ -124,6 +138,7 @@ public class WordGuessClient extends Application {
 		openingScreenButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
+				introSong.pause();
 
 				clientConnection = new GuessClient(data->{
 					Platform.runLater(()->{listItems.getItems().add(data.toString());
@@ -132,9 +147,9 @@ public class WordGuessClient extends Application {
 						});
 				}, Integer.parseInt(portBox.getText()), ipBox.getText());
 				clientConnection.start();
-
-				//System.out.println(javafx.scene.text.Font.getFamilies());
-
+				mainMenuSong.setVolume(0.25);
+				mainMenuSong.setCycleCount(MediaPlayer.INDEFINITE);
+				mainMenuSong.play();
 				primaryStage.setScene(sceneMap.get("main screen"));
 			}
 		});
@@ -158,11 +173,12 @@ public class WordGuessClient extends Application {
 				gameScreenPane = new Pane();
 				gameScreenPane.getChildren().removeAll();
 				VBox vBox = new VBox(wordText, letterGuessBox, guessButton);
+				vBox.setSpacing(20);
 				vBox.setAlignment(Pos.CENTER);
 				gameScreenPane.getChildren().addAll(vBox, listItems, guessesLeft);
 
 				//relocates the items in pane
-				vBox.relocate(375,400);
+				vBox.relocate(375,375);
 				guessesLeft.relocate(50, 20);
 				listItems.relocate(100,725);
 
@@ -190,6 +206,7 @@ public class WordGuessClient extends Application {
 				sportsPane = new Pane();
 				sportsPane.getChildren().removeAll();
 				VBox vBox = new VBox(wordText, letterGuessBox, guessButton);
+				vBox.setSpacing(20);
 				vBox.setAlignment(Pos.CENTER);
 				sportsPane.getChildren().addAll(vBox, listItems, guessesLeft);
 
@@ -222,6 +239,7 @@ public class WordGuessClient extends Application {
 				foodPane = new Pane();
 				foodPane.getChildren().removeAll();
 				VBox vBox = new VBox(wordText, letterGuessBox, guessButton);
+				vBox.setSpacing(20);
 				vBox.setAlignment(Pos.CENTER);
 				foodPane.getChildren().addAll(vBox, listItems, guessesLeft);
 
@@ -295,6 +313,9 @@ public class WordGuessClient extends Application {
 					winPane.getChildren().addAll(hBox);
 					hBox.relocate(200,300);
 					primaryStage.setScene(new Scene(winPane, 608,342));
+					winSong.setVolume(0.25);
+					winSong.setCycleCount(MediaPlayer.INDEFINITE);
+					winSong.play();
 				}
 				//if the user loses sets up and shows the losing screen
 				if(clientConnection.clientInfo.getWord().equals("game over")){
@@ -347,6 +368,9 @@ public class WordGuessClient extends Application {
 		// show the start screen
 		primaryStage.setScene(sceneMap.get("start screen"));
 		primaryStage.show();
+		introSong.setVolume(0.25);
+		introSong.setCycleCount(MediaPlayer.INDEFINITE);
+		introSong.play();
 	}
 	private void clearClient(){
 		clientConnection.clientInfo.setNumWordsGuessed(0);

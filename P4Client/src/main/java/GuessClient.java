@@ -59,7 +59,6 @@ public class GuessClient extends Thread{
                 clientInfo.setNumWordsGuessed(temp.getNumWordsGuessed());
                 clientInfo.setNumWrongGuesses(temp.getNumWrongGuesses());
 
-
             }
             catch(Exception e) {}
         }
